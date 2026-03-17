@@ -3,68 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nano GmbH</title>
+<title>NanoGmbH</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;font-family:Arial;background:#0f172a;color:white}
-header{padding:20px;background:#020617;display:flex;justify-content:space-between}
-button{cursor:pointer}
-.container{padding:40px}
-.project{background:#1e293b;padding:20px;margin:10px 0;border-radius:10px}
-.admin{background:#020617;padding:20px;margin-top:40px;border-radius:10px}
-input{padding:10px;margin:5px;width:200px}
+body{
+margin:0;
+font-family:Inter;
+background:#020617;
+color:white;
+overflow-x:hidden;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+padding:20px 50px;
+align-items:center;
+}
+
+.logo{
+display:flex;
+align-items:center;
+gap:10px;
+font-weight:700;
+font-size:22px;
+}
+
+nav a{
+margin-left:25px;
+color:#cbd5e1;
+text-decoration:none;
+}
+
+.hero{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:80px 60px;
+}
+
+.hero-text h1{
+font-size:48px;
+margin-bottom:20px;
+}
+
+.hero-text p{
+color:#94a3b8;
+max-width:500px;
+}
+
+.btn{
+padding:15px 30px;
+background:#3b82f6;
+border:none;
+border-radius:10px;
+color:white;
+margin-top:20px;
+cursor:pointer;
+}
+
+.sphere{
+width:400px;
+height:400px;
+border-radius:50%;
+background:radial-gradient(circle,#3b82f6,transparent);
+box-shadow:0 0 100px #3b82f6;
+animation:spin 10s linear infinite;
+}
+
+@keyframes spin{
+0%{transform:rotate(0deg)}
+100%{transform:rotate(360deg)}
+}
+
+.products{
+padding:60px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:#0f172a;
+padding:20px;
+border-radius:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-10px);
+}
+
+footer{
+padding:30px;
+text-align:center;
+color:#94a3b8;
+}
+
+.admin-panel{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#0f172a;
+padding:20px;
+border-radius:15px;
+display:none;
+width:300px;
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+background:#020617;
+border:none;
+color:white;
+}
+
 </style>
 </head>
 
 <body>
 
 <header>
-<h2>Nano GmbH</h2>
-<button onclick="login()">Admin Login</button>
+<div class="logo">
+<img src="NanoAI.png" width="40"> NanoGmbH
+</div>
+
+<nav>
+<a href="#">Home</a>
+<a href="#products">Produkte</a>
+<a href="#" onclick="login()">Admin</a>
+</nav>
 </header>
 
-<div class="container">
-<h1>Unsere Projekte</h1>
-<div id="projects"></div>
-
-<div id="adminPanel" class="admin" style="display:none">
-<h2>Admin Panel</h2>
-<input id="name" placeholder="Projektname">
-<input id="desc" placeholder="Beschreibung">
-<button onclick="addProject()">Hinzufügen</button>
+<section class="hero">
+<div class="hero-text">
+<h1>Innovative Lösungen für die Zukunft</h1>
+<p>KI, Cloud, Hosting und mehr – alles von NanoGmbH.</p>
+<button class="btn" onclick="scrollToProducts()">Produkte ansehen</button>
 </div>
+
+<div class="sphere"></div>
+</section>
+
+<section class="products" id="products">
+<h2>Unsere Produkte</h2>
+<div class="grid" id="productList"></div>
+</section>
+
+<footer>
+© 2026 NanoGmbH – Alle Rechte vorbehalten
+</footer>
+
+<div class="admin-panel" id="adminPanel">
+<h3>Admin Dashboard</h3>
+<input id="pname" placeholder="Name">
+<input id="pdesc" placeholder="Beschreibung">
+<input id="plink" placeholder="Link">
+<button class="btn" onclick="addProduct()">Hinzufügen</button>
 </div>
 
 <script>
 
-let projects = JSON.parse(localStorage.getItem('projects')) || [
-{name:"NanoAI",desc:"KI System"},
-{name:"NanoChat",desc:"Chat Plattform"},
-{name:"NanoCloud",desc:"Cloud Speicher"},
-{name:"NanoHost",desc:"Hosting Service"}
+let products = JSON.parse(localStorage.getItem('nano_products')) || [
+{name:"NanoAI",desc:"Künstliche Intelligenz",link:"https://thenano-ai.github.io"},
+{name:"NanoChat",desc:"Chat Plattform",link:"https://thenano-chat.github.io"},
+{name:"NanoCloud",desc:"Cloud Speicher",link:"https://thenano-cloud.github.io"},
+{name:"NanoHost",desc:"Hosting Service",link:"https://thenano-host.github.io"}
 ];
 
 function render(){
-let container = document.getElementById('projects');
-container.innerHTML = '';
-projects.forEach(p=>{
-container.innerHTML += `<div class='project'><h3>${p.name}</h3><p>${p.desc}</p></div>`;
+let el = document.getElementById('productList');
+el.innerHTML='';
+products.forEach(p=>{
+el.innerHTML += `
+<div class="card">
+<h3>${p.name}</h3>
+<p>${p.desc}</p>
+<button class="btn" onclick="openLink('${p.link}')">Öffnen</button>
+</div>`;
 });
 }
 
-function addProject(){
-let name = document.getElementById('name').value;
-let desc = document.getElementById('desc').value;
-projects.push({name,desc});
-localStorage.setItem('projects',JSON.stringify(projects));
+function addProduct(){
+let name = document.getElementById('pname').value;
+let desc = document.getElementById('pdesc').value;
+let link = document.getElementById('plink').value;
+
+if(name && link){
+products.push({name,desc,link});
+localStorage.setItem('nano_products',JSON.stringify(products));
 render();
+}
 }
 
 function login(){
 let pw = prompt("Admin Passwort:");
 if(pw === "nano123"){
-document.getElementById('adminPanel').style.display = 'block';
+document.getElementById('adminPanel').style.display='block';
 }
+}
+
+function openLink(link){
+window.open(link, '_blank');
+}
+
+function scrollToProducts(){
+document.getElementById('products').scrollIntoView({behavior:'smooth'});
 }
 
 render();
