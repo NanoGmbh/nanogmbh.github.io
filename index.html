@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nano GmbH</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:white}
+header{padding:20px;background:#020617;display:flex;justify-content:space-between}
+button{cursor:pointer}
+.container{padding:40px}
+.project{background:#1e293b;padding:20px;margin:10px 0;border-radius:10px}
+.admin{background:#020617;padding:20px;margin-top:40px;border-radius:10px}
+input{padding:10px;margin:5px;width:200px}
+</style>
+</head>
+
+<body>
+
+<header>
+<h2>Nano GmbH</h2>
+<button onclick="login()">Admin Login</button>
+</header>
+
+<div class="container">
+<h1>Unsere Projekte</h1>
+<div id="projects"></div>
+
+<div id="adminPanel" class="admin" style="display:none">
+<h2>Admin Panel</h2>
+<input id="name" placeholder="Projektname">
+<input id="desc" placeholder="Beschreibung">
+<button onclick="addProject()">Hinzufügen</button>
+</div>
+</div>
+
+<script>
+
+let projects = JSON.parse(localStorage.getItem('projects')) || [
+{name:"NanoAI",desc:"KI System"},
+{name:"NanoChat",desc:"Chat Plattform"},
+{name:"NanoCloud",desc:"Cloud Speicher"},
+{name:"NanoHost",desc:"Hosting Service"}
+];
+
+function render(){
+let container = document.getElementById('projects');
+container.innerHTML = '';
+projects.forEach(p=>{
+container.innerHTML += `<div class='project'><h3>${p.name}</h3><p>${p.desc}</p></div>`;
+});
+}
+
+function addProject(){
+let name = document.getElementById('name').value;
+let desc = document.getElementById('desc').value;
+projects.push({name,desc});
+localStorage.setItem('projects',JSON.stringify(projects));
+render();
+}
+
+function login(){
+let pw = prompt("Admin Passwort:");
+if(pw === "nano123"){
+document.getElementById('adminPanel').style.display = 'block';
+}
+}
+
+render();
+
+</script>
+
+</body>
+</html>
